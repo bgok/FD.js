@@ -815,7 +815,11 @@ var FD = (function (exports, Math) {
                 var v1 = this.space[1], v2 = this.space[2];
                 var nextStep = v1.step + v2.step;
                 if (nextStep > this.last_step) {
-                    var d = domain_non_empty(domain_intersection(v1.dom, v2.dom));
+                    try {
+                        var d = domain_non_empty(domain_intersection(v1.dom, v2.dom));
+                    } catch(e) {
+                        throw this.allvars[0] + " and " + this.allvars[1] + " don't intersect"
+                    }
                     v1.set_dom(d);
                     v2.set_dom(d);
                     this.last_step = v1.step + v2.step;
@@ -1029,7 +1033,12 @@ var FD = (function (exports, Math) {
                 var nextStep = v1.step + v2.step + sum.step;
 
                 if (nextStep > this.last_step) {
-                    sum.set_dom(domain_non_empty(domain_intersection(plusop(v1.dom, v2.dom), sum.dom)));
+                    try {
+                        sum.set_dom(domain_non_empty(domain_intersection(plusop(v1.dom, v2.dom), sum.dom)));
+                    } catch(e) {
+                        throw this.allvars[0] + " and " + this.allvars[1] + " don't intersect";
+                    }
+
                     this.last_step = sum.step + v1.step + v2.step;
                 }
 
@@ -1960,6 +1969,7 @@ var FD = (function (exports, Math) {
     exports.space = Space;
     exports.distribute = Distribute;
     exports.search = Search;
+    exports.VAR = FDVar;
 
     return exports;
 })({}, Math);
